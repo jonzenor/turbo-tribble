@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - 8080:80
+    restart: unless-stopped
+
+  mysql:
+    image: mariadb
+    volumes:
+      - ./docker/sql:/docker-entrypoint-initdb.d/
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: sakila
+      MARIADB_DATABASE: sakila
+      MARIADB_USER: sakila
+      MARIADB_PASSWORD: sakila
+    restart: unless-stopped
+
