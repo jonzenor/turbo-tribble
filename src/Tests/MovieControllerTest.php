@@ -129,6 +129,15 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals($dbRating, $data[0]['rating']);
 	}
 
+	/** @test */
+	public function rating_endpoint_returns_error_for_invalid_rating_format()
+	{
+		// Since we are expecting the page to fail we have to tell Guzzle to not fail on http_errors.
+		$response = $this->client->get('/rated/Emc2', ['http_errors' => false]);
+
+		$this->assertEquals(400, $response->getStatusCode());
+	}
+
 	// TODO: Filter movies by category
 
 	// TODO: Validate that the requested category exists
@@ -136,8 +145,14 @@ final class MovieControllerTest extends TestCase
 	// TODO: Add a movie to the database
 
 
+	/**
+	 * @returns array<string, string>
+	 * The first value is the expected search term
+	 * The second value is the standardized way the ratins are stored in the database
+	 */
 	public function validRatings()
     {
+		// This returns all of the valid Ratings that can be searched for
         return [
             ['G', 'G'],
             ['PG', 'PG'],

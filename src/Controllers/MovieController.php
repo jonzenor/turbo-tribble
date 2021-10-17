@@ -60,12 +60,23 @@ class MovieController
 
 	public function searchRating(Request $request, Response $response, array $args)
 	{
-		$rating = $this->standardizeRatings($args['rating']);
+		$rating = $args['rating'];
+
+		if (!$this->validateRating($rating)) {
+			return $response->withStatus(400);
+		}
+
+		$rating = $this->standardizeRatings($rating);
+
 		$movies = $this->movieData->searchRating($rating);
 
 		return $response->withJson($movies);
 	}
 
+	/**
+	 * @param string $rating
+	 * @return string $standardizedRating
+	 */
 	private function standardizeRatings($rating)
 	{
 		switch ($rating) {
@@ -78,5 +89,16 @@ class MovieController
 			default:
 				return $rating;
 		}
+	}
+
+	/**
+	 * @param string $rating
+	 * @return bool
+	 */
+	private function validateRating($rating)
+	{
+		$validRatings = ['G', 'PG', 'PG13', 'PG-13', 'R', 'NC17', 'NC-17'];
+
+		return in_array($rating, $validRatings);
 	}
 }
