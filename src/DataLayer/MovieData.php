@@ -12,7 +12,7 @@ class MovieData
 
 	public function getAllMovies(): array
 	{
-		$stmt = $this->db->prepare('select * from film');
+		$stmt = $this->db->prepare('SELECT * FROM film');
 		$stmt->execute();
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 	}
@@ -34,7 +34,7 @@ class MovieData
 
 	public function searchTitle($searchTerm): ?array
 	{
-		$query = $this->db->prepare('select * from film WHERE title LIKE "%' .  $searchTerm . '%"');
+		$query = $this->db->prepare('SELECT * FROM film WHERE title LIKE "%' .  $searchTerm . '%"');
 		$query->execute();
 
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -42,9 +42,18 @@ class MovieData
 
 	public function searchRating($rating): ?array
 	{
-		$query = $this->db->prepare('select * from film WHERE rating = "' . $rating . '"');
+		$query = $this->db->prepare('SELECT * FROM film WHERE rating = "' . $rating . '"');
 		$query->execute();
 
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	public function searchCategory($category): ?array
+	{
+		$query = $this->db->prepare('SELECT * FROM film LEFT JOIN `film_category` ON film.film_id = film_category.film_id WHERE `category_id` = ' . $category);
+		$query->execute();
+
+		return $query->fetchAll(\PDO::FETCH_ASSOC);
+
 	}
 }

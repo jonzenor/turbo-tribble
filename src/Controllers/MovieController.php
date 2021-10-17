@@ -5,15 +5,20 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-use \DataLayer\MovieData;
+use \DataLayer\{
+	MovieData,
+	CategoryData,
+};
 
 class MovieController
 {
 	private MovieData $movieData;
+	private CategoryData $categoryData;
 
 	public function __construct(ContainerInterface $container)
 	{
 		$this->movieData = $container->get('movieData');
+		$this->categoryData = $container->get('categoryData');
 	}
 
 	public function listAll(Request $request, Response $response, array $args)
@@ -72,6 +77,19 @@ class MovieController
 
 		return $response->withJson($movies);
 	}
+
+	public function searchCategory(Request $request, Response $response, array $args)
+	{
+		$category_name = $args['name'];
+
+		$category_id = $this->categoryData->getCategoryID($category_name);
+
+		$movies = $this->movieData->searchCategory($category_id);
+
+		return $response->withJson($movies);
+	}
+
+
 
 	/**
 	 * @param string $rating

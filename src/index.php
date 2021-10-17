@@ -33,6 +33,11 @@ $container['movieData'] = function($c) {
 	return new \DataLayer\MovieData($c['db']);
 };
 
+$container['categoryData'] = function($c) {
+	return new \DataLayer\CategoryData($c['db']);
+};
+
+
 /**
  * Routes
  */
@@ -41,5 +46,6 @@ $app->get('/movies', \Controllers\MovieController::class . ':listAll');
 $app->get('/movie/{id}', \Controllers\MovieController::class . ':listMovie');
 $app->get('/search/{term}', \Controllers\MovieController::class . ':searchTitle');
 $app->get('/rated/{rating}', \Controllers\MovieController::class . ':searchRating');
+$app->get('/category/{name}', \Controllers\MovieController::class . ':searchCategory');
 
 $app->run();

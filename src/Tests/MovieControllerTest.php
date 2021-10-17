@@ -139,6 +139,41 @@ final class MovieControllerTest extends TestCase
 	}
 
 	// TODO: Filter movies by category
+	/** @test */
+	public function category_endpoint_loads()
+	{
+		$response = $this->client->get('/category/Action');
+
+		$this->assertEquals(200, $response->getStatusCode());
+	}
+
+	/** @test */
+	public function category_endpoint_returns_movies()
+	{
+		$response = $this->client->get('/category/Action');
+
+		$data = json_decode($response->getBody(), true);
+		$this->assertArrayHasKey('film_id', $data[0]);
+	}
+
+	/** @test */
+	public function category_endpoint_returns_movies_from_the_correct_category()
+	{
+		$response = $this->client->get('/category/Action');
+		
+		// If I were doing this type of test in a full application then I would be
+		// making a mock database and filling it in with factory created test data
+		// and testing against that. However, as this is a small test project I am
+		// just going to test against the data and values that I know that are in
+		// the provided database.
+		$data = json_decode($response->getBody(), true);
+
+		// The first result from search for action movies should be id 19
+		$this->assertEquals(19, $data[0]['film_id']);
+	}
+
+	// Validate the category exists
+	
 
 	// TODO: Validate that the requested category exists
 
