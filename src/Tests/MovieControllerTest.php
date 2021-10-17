@@ -101,7 +101,7 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals('CROOKED FROGMEN', $data[0]['title']);
 	}
 	
-	// TODO: Filter movies by rating
+	// DONE: Filter movies by rating
 	/** @test */
 	public function rating_endpoint_loads()
 	{
