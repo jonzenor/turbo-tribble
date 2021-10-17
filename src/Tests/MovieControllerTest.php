@@ -1,8 +1,6 @@
 <?php
 namespace Tests;
 
-// require __DIR__ . '/../vendor/autoload.php';
-
 use PHPUnit\Framework\TestCase;
 
 final class MovieControllerTest extends TestCase
@@ -36,9 +34,7 @@ final class MovieControllerTest extends TestCase
 		$this->assertJson($response->getBody());
 
 		$data = json_decode($response->getBody(), true);
-		$this->assertArrayHasKey('film_id', $data[0]);		$data = json_decode($response->getBody(), true);
 		$this->assertArrayHasKey('film_id', $data[0]);
-
 	}
 
 	// DONE: Return a single movie
@@ -79,9 +75,15 @@ final class MovieControllerTest extends TestCase
 
 	// TODO: Search for movies by title
 
+	// TODO: Validate user input for searches
+
 	// TODO: Filter movies by rating
 
+	// TODO: Validate rating input
+
 	// TODO: Filter movies by category
+
+	// TODO: Validate category input
 
 	// TODO: Add a movie to the database
 }
