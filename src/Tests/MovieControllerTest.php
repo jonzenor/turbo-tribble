@@ -74,9 +74,30 @@ final class MovieControllerTest extends TestCase
 	}
 
 	// TODO: Search for movies by title
+	/** @test */
+	public function search_endpoint_loads()
+	{
+		$response = $this->client->get('/search/CROOKED%20FROGMEN');
 
-	// TODO: Validate user input for searches
+        $this->assertEquals(200, $response->getStatusCode());
+	}
 
+	/** @test */
+	public function search_endpoint_returns_some_movies()
+	{
+		$response = $this->client->get('/search/CROOKED%20FROGMEN');
+		$data = json_decode($response->getBody(), true);
+		$this->assertArrayHasKey('film_id', $data[0]);
+	}
+
+	/** @test */
+	public function search_endpoint_returns_the_correct_movie()
+	{
+		$response = $this->client->get('/search/CROOKED%20FROGMEN');
+		$data = json_decode($response->getBody(), true);
+		$this->assertEquals('CROOKED FROGMEN', $data[0]['title']);
+	}
+	
 	// TODO: Filter movies by rating
 
 	// TODO: Validate rating input

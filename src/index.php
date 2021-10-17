@@ -37,5 +37,6 @@ $container['movieData'] = function($c) {
 
 $app->get('/movies', \Controllers\MovieController::class . ':listAll');
 $app->get('/movie/{id}', \Controllers\MovieController::class . ':listMovie');
+$app->get('/search/{term}', \Controllers\MovieController::class . ':searchMovies');
 
 $app->run();

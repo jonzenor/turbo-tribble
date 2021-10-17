@@ -30,4 +30,11 @@ class MovieData
 
 		return null;
 	}
+
+	public function searchMovies($searchTerm): ?array
+	{
+		$query = $this->db->prepare('select * from film WHERE title LIKE "%' .  $searchTerm . '%"');
+		$query->execute();
+		return $query->fetchAll(\PDO::FETCH_ASSOC);
+	}
 }

@@ -4,4 +4,4 @@
 *.swo
 *.DS_Store
 .idea/
-.phpunit*
+src/.phpunit.result.cache

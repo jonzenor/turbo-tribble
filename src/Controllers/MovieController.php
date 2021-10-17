@@ -40,10 +40,21 @@ class MovieController
 
 		$movie = $this->movieData->getMovie($movie_id);
 
+		// Throw a response code if the movie was not found
 		if (!$movie) {
 			throw new \Slim\Exception\NotFoundException($request, $response);
 		}
 
 		return $response->withJson($movie);
+	}
+
+	public function searchMovies(Request $request, Response $response, array $args)
+	{
+		// Sanitize user input
+		$searchTerm = htmlentities($args['term'], ENT_QUOTES, 'UTF-8');
+		
+		$movies = $this->movieData->searchMovies($searchTerm);
+
+		return $response->withJson($movies);
 	}
 }
