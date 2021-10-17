@@ -138,7 +138,7 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals(400, $response->getStatusCode());
 	}
 
-	// TODO: Filter movies by category
+	// DONE: Filter movies by category
 	/** @test */
 	public function category_endpoint_loads()
 	{
@@ -168,12 +168,9 @@ final class MovieControllerTest extends TestCase
 		// the provided database.
 		$data = json_decode($response->getBody(), true);
 
-		// The first result from search for action movies should be id 19
+		// The first result from search for action movies should be id
 		$this->assertEquals(19, $data[0]['film_id']);
-	}
-
-	// Validate the category exists
-	
+	}	
 
 	// TODO: Validate that the requested category exists
 
