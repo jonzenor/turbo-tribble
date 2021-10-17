@@ -1,6 +1,7 @@
 <?php
 require './vendor/autoload.php';
 
+// Enable this section to show errors in development
 $configuration = [
     'settings' => [
         'displayErrorDetails' => true,
@@ -10,6 +11,7 @@ $configuration = [
 $c = new \Slim\Container($configuration);
 $app = new \Slim\App($c);
 
+// Enable this section to hide errors in production
 // $app = new \Slim\App;
 
 $container = $app->getContainer();
@@ -37,6 +39,7 @@ $container['movieData'] = function($c) {
 
 $app->get('/movies', \Controllers\MovieController::class . ':listAll');
 $app->get('/movie/{id}', \Controllers\MovieController::class . ':listMovie');
-$app->get('/search/{term}', \Controllers\MovieController::class . ':searchMovies');
+$app->get('/search/{term}', \Controllers\MovieController::class . ':searchTitle');
+$app->get('/rated/{rating}', \Controllers\MovieController::class . ':searchRating');
 
 $app->run();

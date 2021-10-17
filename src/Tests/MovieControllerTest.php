@@ -60,6 +60,7 @@ final class MovieControllerTest extends TestCase
 	/** @test */
 	public function return_404_error_if_movie_does_not_exist(): void
 	{
+		// Since we are expecting the page to fail we have to tell Guzzle to not fail on http_errors.
 		$response = $this->client->get('/movie/10000', ['http_errors' => false]);
 		
         $this->assertEquals(404, $response->getStatusCode());
@@ -68,12 +69,14 @@ final class MovieControllerTest extends TestCase
 	/** @test */
 	public function return_an_error_if_invalid_data_type_is_given(): void
 	{
+		// Since we are expecting the page to fail we have to tell Guzzle to not fail on http_errors.
 		$response = $this->client->get('/movie/AllYourBase', ['http_errors' => false]);
+		
 		// If we were not typecasting the input to an integer, then we would test for status 400 instead
 		$this->assertEquals(404, $response->getStatusCode());
 	}
 
-	// TODO: Search for movies by title
+	// DONE: Search for movies by title
 	/** @test */
 	public function search_endpoint_loads()
 	{
@@ -99,12 +102,48 @@ final class MovieControllerTest extends TestCase
 	}
 	
 	// TODO: Filter movies by rating
+	/** @test */
+	public function rating_endpoint_loads()
+	{
+		$response = $this->client->get('/rated/G');
 
-	// TODO: Validate rating input
+        $this->assertEquals(200, $response->getStatusCode());
+	}
+
+	/** @test */
+	public function rating_endpoint_returns_movies()
+	{
+		$response = $this->client->get('/rated/G');
+		$data = json_decode($response->getBody(), true);
+		$this->assertArrayHasKey('film_id', $data[0]);
+	}
+
+	/** 
+	 * @test 
+	 * @dataProvider validRatings
+	 */
+	public function rating_endpoint_returns_only_movies_of_the_requested_rating($searchRating, $dbRating)
+	{
+		$response = $this->client->get('/rated/' . $searchRating);
+		$data = json_decode($response->getBody(), true);
+		$this->assertEquals($dbRating, $data[0]['rating']);
+	}
 
 	// TODO: Filter movies by category
 
-	// TODO: Validate category input
+	// TODO: Validate that the requested category exists
 
 	// TODO: Add a movie to the database
+
+
+	public function validRatings()
+    {
+        return [
+            ['G', 'G'],
+            ['PG', 'PG'],
+            ['PG13', 'PG-13'],
+            ['R', 'R'],
+            ['NC17', 'NC-17'],
+        ];
+    }
 }

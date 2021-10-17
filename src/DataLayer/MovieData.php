@@ -28,13 +28,23 @@ class MovieData
 			return $result;
 		}
 
+		// If a movie was not found, then just return null
 		return null;
 	}
 
-	public function searchMovies($searchTerm): ?array
+	public function searchTitle($searchTerm): ?array
 	{
 		$query = $this->db->prepare('select * from film WHERE title LIKE "%' .  $searchTerm . '%"');
 		$query->execute();
+
+		return $query->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	public function searchRating($rating): ?array
+	{
+		$query = $this->db->prepare('select * from film WHERE rating = "' . $rating . '"');
+		$query->execute();
+
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 }

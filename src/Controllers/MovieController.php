@@ -48,13 +48,35 @@ class MovieController
 		return $response->withJson($movie);
 	}
 
-	public function searchMovies(Request $request, Response $response, array $args)
+	public function searchTitle(Request $request, Response $response, array $args)
 	{
 		// Sanitize user input
 		$searchTerm = htmlentities($args['term'], ENT_QUOTES, 'UTF-8');
 		
-		$movies = $this->movieData->searchMovies($searchTerm);
+		$movies = $this->movieData->searchTitle($searchTerm);
 
 		return $response->withJson($movies);
+	}
+
+	public function searchRating(Request $request, Response $response, array $args)
+	{
+		$rating = $this->standardizeRatings($args['rating']);
+		$movies = $this->movieData->searchRating($rating);
+
+		return $response->withJson($movies);
+	}
+
+	private function standardizeRatings($rating)
+	{
+		switch ($rating) {
+			case "PG13":
+				return "PG-13";
+				break;
+			case "NC17":
+				return "NC-17";
+				break;
+			default:
+				return $rating;
+		}
 	}
 }
