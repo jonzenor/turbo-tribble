@@ -84,6 +84,10 @@ class MovieController
 
 		$category_id = $this->categoryData->getCategoryID($category_name);
 
+		if (!$category_id) {
+			return $response->withStatus(400);
+		}
+
 		$movies = $this->movieData->searchCategory($category_id);
 
 		return $response->withJson($movies);

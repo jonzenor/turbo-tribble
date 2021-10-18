@@ -10,7 +10,7 @@ class CategoryData
 		$this->db = $db;
 	}
 
-	public function getCategoryID($name): int
+	public function getCategoryID($name): ?int
 	{
 		$query = $this->db->prepare('SELECT category_id FROM category WHERE `name` = "' . $name . '"');
 		$query->execute();

@@ -172,7 +172,13 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals(19, $data[0]['film_id']);
 	}	
 
-	// TODO: Validate that the requested category exists
+	// DONE: Validate that the requested category exists
+	/** @test */
+	public function category_endpoint_returns_error_code_if_invalid_category_given()
+	{
+		$response = $this->client->get('/category/EpicSciFiFantasy', ['http_errors' => false]);
+        $this->assertEquals(400, $response->getStatusCode());
+	}
 
 	// TODO: Add a movie to the database
 
