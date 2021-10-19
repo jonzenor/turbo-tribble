@@ -180,7 +180,7 @@ final class MovieControllerTest extends TestCase
         $this->assertEquals(400, $response->getStatusCode());
 	}
 
-	// TODO: Add a movie to the database
+	// DONE: Add a movie to the database
 	/** @test */
 	public function create_movie_endpoint_loads()
 	{
@@ -247,9 +247,38 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals(422, $response->getStatusCode());
 	}
 
+	/** @test */
+	public function creating_a_movie_adds_movie_to_the_correct_category()
+	{
+		$data = $this->getFormData();
+		try {
+			$response = $this->client->post('/create', [
+				'body' => json_encode($data),
+			]);
+		} catch (\GuzzleHttp\Exception\ClientErrorResponseException  $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		} catch (\GuzzleHttp\Exception\RequestException $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		} catch (\GuzzleHttp\Exception\ClientException  $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		}
+
+		$this->assertEquals(200, $response->getStatusCode());
+
+		$response = $this->client->get('/category/Action');
+
+		$this->assertEquals(200, $response->getStatusCode());
+		$receivedData = json_decode($response->getBody(), true);
+
+		$lastMovie = end($receivedData);
+		$this->assertArrayHasKey('film_id', $lastMovie);
+		$this->assertEquals($data['title'], $lastMovie['title']);
+	}
+
+
 
 	/**
-	 * @returns array<string, string>
+	 * @return array<string,string>
 	 * The first value is the expected search term
 	 * The second value is the standardized way the ratins are stored in the database
 	 */
@@ -265,6 +294,11 @@ final class MovieControllerTest extends TestCase
         ];
     }
 
+	/**
+	 * @return array<string,string>
+	 * The first value is the form field
+	 * The second value is the bad data that should fail
+	 */
     public function requiredFormValidationProvider()
     {
         return [
@@ -281,6 +315,11 @@ final class MovieControllerTest extends TestCase
             ['category', ''],
         ];
     }
+
+	/**
+	 * @return array
+	 * Returns an array of form data in the format of 'field' => 'value'
+	 */
 	private function getFormData()
 	{
 		$data = [

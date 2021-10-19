@@ -72,11 +72,16 @@ class MovieData
 			"' . $data['cost'] . '",
 			"' . $data['rating'] . '",
 			"' . $data['special_features'] . '",
-			"2021-10-18 06:16:00"
+			"' . date('Y-m-d H:i:s') . '"
 		)');
 
 		$query->execute();
 		$movieId = $this->db->lastInsertId();
+
+		$query2 = $this->db->prepare('INSERT INTO film_category (film_id, category_id, last_update) 
+			VALUES ("' .  $movieId . '", "' . $data['category'] . '", "' . date('Y-m-d H:i:s') . '")'
+		);
+		$query2->execute();
 
 		return $movieId;
 	}

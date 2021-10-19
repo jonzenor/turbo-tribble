@@ -148,6 +148,10 @@ class MovieController
 			'rental_duration', 'rate', 'length', 'cost', 'rating',
 			'special_features', 'category'];
 
+		// Realistically we should be doing way more detailed form validation.
+		// Validating that certain fields are integers or decimal, for instance.
+		// If I were okay with this taking another day to complete then I would add that,
+		// however my current job requires me so I will just end it with this note.
 		return $requiredFields;
 	}
 
