@@ -1,4 +1,5 @@
 <?php
+
 require './vendor/autoload.php';
 
 // Enable this section to show errors in development
@@ -37,7 +38,6 @@ $container['categoryData'] = function($c) {
 	return new \DataLayer\CategoryData($c['db']);
 };
 
-
 /**
  * Routes
  */
@@ -47,5 +47,7 @@ $app->get('/movie/{id}', \Controllers\MovieController::class . ':listMovie');
 $app->get('/search/{term}', \Controllers\MovieController::class . ':searchTitle');
 $app->get('/rated/{rating}', \Controllers\MovieController::class . ':searchRating');
 $app->get('/category/{name}', \Controllers\MovieController::class . ':searchCategory');
+
+$app->post('/create', \Controllers\MovieController::class . ':createMovie');
 
 $app->run();

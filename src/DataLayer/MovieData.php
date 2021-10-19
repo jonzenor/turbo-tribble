@@ -54,6 +54,30 @@ class MovieData
 		$query->execute();
 
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
+	}
 
+	public function addMovie(array $data): ?int
+	{
+		$query = $this->db->prepare('INSERT INTO film 
+			(title, description, release_year, language_id, original_language_id, rental_duration, rental_rate, length, replacement_cost, rating, special_features, last_update)
+			VALUES (
+			"' . $data['title'] . '",
+			"' . $data['description'] . '",
+			"' . $data['year'] . '",
+			"' . $data['language_id'] . '",
+			"1",
+			"' . $data['rental_duration'] . '",
+			"' . $data['rate'] . '",
+			"' . $data['length'] . '",
+			"' . $data['cost'] . '",
+			"' . $data['rating'] . '",
+			"' . $data['special_features'] . '",
+			"2021-10-18 06:16:00"
+		)');
+
+		$query->execute();
+		$movieId = $this->db->lastInsertId();
+
+		return $movieId;
 	}
 }

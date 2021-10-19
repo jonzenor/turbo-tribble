@@ -181,6 +181,55 @@ final class MovieControllerTest extends TestCase
 	}
 
 	// TODO: Add a movie to the database
+	/**  */
+	public function create_movie_endpoint_loads()
+	{
+		$response = $this->client->post('/create');
+
+        $this->assertEquals(200, $response->getStatusCode());
+	}
+
+	/** @test */
+	public function create_movie_endpoint_adds_data_to_the_application()
+	{
+		$data = [
+			'title' => "Adventures of a Software Engineer" . rand(1, 10000),
+			'description' => "An epic story of one software engineer set free from captivity when he is hired by CCB and goes on to do great things for the company, and the world.",
+			'year' => '2021',
+			'language_id' => '1',
+			'rental_duration' => '5',
+			'rate' => '4.99',
+			'length' => '90',
+			'cost' => '20.99',
+			'rating' => 'PG',
+			'special_features' => 'Trailers,Deleted Scenes',
+			//'category' => '1', // This is an Adventure movie for sure. It had better not be a horror story...
+		];
+
+		// We obviously had some fun times trying to get this test to work...
+		try {
+			$response = $this->client->post('/create', [
+				'body' => json_encode($data),
+			]);
+		} catch (\GuzzleHttp\Exception\ClientErrorResponseException  $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		} catch (\GuzzleHttp\Exception\RequestException $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		} catch (\GuzzleHttp\Exception\ClientException  $e) {
+			var_dump($e->getResponse()->getBody()->getContents());
+		}
+
+		$this->assertEquals(200, $response->getStatusCode());
+		$url = '/search/' . str_replace(' ', '%20', $data['title']);
+
+		// Make sure the movie is found
+		$response = $this->client->get($url);
+        $this->assertEquals(200, $response->getStatusCode());
+
+		$receivedData = json_decode($response->getBody(), true);
+		$this->assertArrayHasKey('film_id', $receivedData[0]);
+		$this->assertEquals($data['title'], $receivedData[0]['title']);
+	}
 
 
 	/**

@@ -93,6 +93,13 @@ class MovieController
 		return $response->withJson($movies);
 	}
 
+	public function createMovie(Request $request, Response $response, array $args)
+	{
+		$data = json_decode($request->getBody(), true);
+
+		$movie = $this->movieData->addMovie($data);
+	}
+
 
 
 	/**
