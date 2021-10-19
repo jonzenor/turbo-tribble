@@ -97,6 +97,14 @@ class MovieController
 	{
 		$data = json_decode($request->getBody(), true);
 
+		if (!is_array($data)) {
+			return $response->withStatus(400);
+		}
+
+		if (!$this->validateFormData($data)) {
+			return $response->withStatus(422);
+		}
+
 		$movie = $this->movieData->addMovie($data);
 	}
 
@@ -129,5 +137,32 @@ class MovieController
 		$validRatings = ['G', 'PG', 'PG13', 'PG-13', 'R', 'NC17', 'NC-17'];
 
 		return in_array($rating, $validRatings);
+	}
+
+	/**
+	 * @return array
+	 */
+	private function requiredFormFields()
+	{
+		$requiredFields = ['title', 'description', 'year', 'language_id',
+			'rental_duration', 'rate', 'length', 'cost', 'rating',
+			'special_features', 'category'];
+
+		return $requiredFields;
+	}
+
+	private function validateFormData($formData)
+	{
+		foreach ($this->requiredFormFields() as $requiredField) {
+			if (!isset($formData[$requiredField])) {
+				return false;
+			}
+
+			if ($formData[$requiredField] == '') {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

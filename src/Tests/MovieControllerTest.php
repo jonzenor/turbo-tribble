@@ -120,7 +120,7 @@ final class MovieControllerTest extends TestCase
 
 	/** 
 	 * @test 
-	 * @dataProvider validRatings
+	 * @dataProvider validRatingsProvider
 	 */
 	public function rating_endpoint_returns_only_movies_of_the_requested_rating($searchRating, $dbRating)
 	{
@@ -181,30 +181,18 @@ final class MovieControllerTest extends TestCase
 	}
 
 	// TODO: Add a movie to the database
-	/**  */
+	/** @test */
 	public function create_movie_endpoint_loads()
 	{
-		$response = $this->client->post('/create');
+		$response = $this->client->request('POST', '/create', ['http_errors' => false]);
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(400, $response->getStatusCode());
 	}
 
 	/** @test */
 	public function create_movie_endpoint_adds_data_to_the_application()
 	{
-		$data = [
-			'title' => "Adventures of a Software Engineer" . rand(1, 10000),
-			'description' => "An epic story of one software engineer set free from captivity when he is hired by CCB and goes on to do great things for the company, and the world.",
-			'year' => '2021',
-			'language_id' => '1',
-			'rental_duration' => '5',
-			'rate' => '4.99',
-			'length' => '90',
-			'cost' => '20.99',
-			'rating' => 'PG',
-			'special_features' => 'Trailers,Deleted Scenes',
-			//'category' => '1', // This is an Adventure movie for sure. It had better not be a horror story...
-		];
+		$data = $this->getFormData();
 
 		// We obviously had some fun times trying to get this test to work...
 		try {
@@ -231,13 +219,41 @@ final class MovieControllerTest extends TestCase
 		$this->assertEquals($data['title'], $receivedData[0]['title']);
 	}
 
+	/** @test */
+	public function create_movie_endpoint_returns_error_if_data_malformed()
+	{
+		$data = $this->getFormData();
+
+		$response = $this->client->request('POST', '/create', [
+			'body' => '{"title","oops"}',
+			'http_errors' => false,
+		]);
+		$this->assertEquals(400, $response->getStatusCode());
+	}
+
+	/**
+	 * @test 
+	 * @dataProvider requiredFormValidationProvider
+	 **/
+	public function validate_that_all_fields_are_required($field, $badValue)
+	{
+		$data = $this->getFormData();
+		$data[$field] = $badValue;
+
+		$response = $this->client->request('POST', '/create', [
+			'body' => json_encode($data),
+			'http_errors' => false,
+		]);
+		$this->assertEquals(422, $response->getStatusCode());
+	}
+
 
 	/**
 	 * @returns array<string, string>
 	 * The first value is the expected search term
 	 * The second value is the standardized way the ratins are stored in the database
 	 */
-	public function validRatings()
+	public function validRatingsProvider()
     {
 		// This returns all of the valid Ratings that can be searched for
         return [
@@ -248,4 +264,39 @@ final class MovieControllerTest extends TestCase
             ['NC17', 'NC-17'],
         ];
     }
+
+    public function requiredFormValidationProvider()
+    {
+        return [
+            ['title', ''],
+            ['description', ''],
+            ['year', ''],
+            ['language_id', ''],
+            ['rental_duration', ''],
+            ['rate', ''],
+            ['length', ''],
+            ['cost', ''],
+            ['rating', ''],
+            ['special_features', ''],
+            ['category', ''],
+        ];
+    }
+	private function getFormData()
+	{
+		$data = [
+			'title' => "Adventures of a Software Engineer" . rand(1, 100000),
+			'description' => "An epic story of one software engineer set free from captivity when he is hired by CCB and goes on to do great things for the company, and the world.",
+			'year' => '2021',
+			'language_id' => '1',
+			'rental_duration' => '5',
+			'rate' => '4.99',
+			'length' => '90',
+			'cost' => '20.99',
+			'rating' => 'PG',
+			'special_features' => 'Trailers,Deleted Scenes',
+			'category' => '1', // This is an Adventure movie for sure. It had better not be a horror story...
+		];
+
+		return $data;
+	}
 }
